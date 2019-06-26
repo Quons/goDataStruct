@@ -32,6 +32,8 @@ func main() {
 	if err := heroList.AddByOrder(h5); err != nil {
 		fmt.Print(err)
 	}
+	h6.Name = "刘恒越"
+	heroList.Update(h6)
 	heroList.List()
 }
 
@@ -52,6 +54,56 @@ func (heroList *HeroNodeList) Add(hero HeroNode) error {
 	}
 	tmp.next = &hero
 	return nil
+}
+
+func (heroList *HeroNodeList) Update(hero HeroNode) {
+	if heroList.Head == nil {
+		//判断链表是空，就初始化一个
+		heroList.Head = &HeroNode{0, "", "", nil}
+	}
+	//临时变量，用于遍历
+	tmp := heroList.Head
+	flag := false
+	for {
+		if tmp == nil {
+			break
+		}
+		if tmp.No == hero.No {
+			flag = true
+			break
+		}
+		tmp = tmp.next
+	}
+	if flag {
+		tmp.Name = hero.Name
+		tmp.nickname = hero.nickname
+	} else {
+		fmt.Println("get no hero")
+	}
+}
+func (heroList *HeroNodeList) Delete(hero HeroNode) {
+	if heroList.Head == nil {
+		//判断链表是空，就初始化一个
+		heroList.Head = &HeroNode{0, "", "", nil}
+	}
+	//临时变量，用于遍历
+	tmp := heroList.Head
+	flag := false
+	for {
+		if tmp.next == nil {
+			break
+		}
+		if tmp.No == hero.No {
+			flag = true
+			break
+		}
+		tmp = tmp.next
+	}
+	if flag {
+		tmp.next = tmp.next.next
+	} else {
+		fmt.Println("get no hero")
+	}
 }
 
 func (heroList *HeroNodeList) AddByOrder(hero HeroNode) error {
