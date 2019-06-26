@@ -35,6 +35,74 @@ func main() {
 	h6.Name = "刘恒越"
 	heroList.Update(h6)
 	heroList.List()
+	fmt.Println(GetLength(*heroList.Head))
+	node, err := GetLastIndexNode(*heroList.Head, 6)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("%v\n", node.String())
+	ReverseLinkedList(heroList.Head)
+	heroList.List()
+}
+
+//获取链表的有效长度，带头结点的链表不包含头结点
+func GetLength(head HeroNode) (int, error) {
+	if head.next == nil {
+		return 0, errors.New("empty list")
+	}
+	var length int
+	tmp := head.next
+	for tmp != nil {
+		length++
+		tmp = tmp.next
+	}
+	return length, nil
+
+}
+
+//获取单链表的倒数第k个结点
+func GetLastIndexNode(head HeroNode, index int) (HeroNode, error) {
+	//判断是否为空
+	var hero HeroNode
+	if head.next == nil {
+		return hero, errors.New("empty list")
+	}
+	//获取有效长度
+	length, err := GetLength(head)
+	if err != nil {
+		return hero, err
+	}
+	//校验index 是否有效
+	if index <= 0 || index > length {
+		return hero, errors.New("invalid index")
+	}
+	tmp := head.next
+	for i := 0; i < length-index; i++ {
+		tmp = tmp.next
+	}
+	return *tmp, nil
+}
+
+//反转链表
+func ReverseLinkedList(head *HeroNode) {
+	//判断是否为空
+	if head.next == nil || head.next.next == nil {
+		return
+	}
+	//定义临时的reverseHead
+	reverseHead := HeroNode{0, "", "", nil}
+	//定义当前的节点
+	cur := head.next
+	var next *HeroNode
+	for cur != nil {
+		//将临时链表的下一个节点拼到当前节点的后面，并将当前节点拼到临时链表的头结点后面
+		next = cur.next
+		cur.next = reverseHead.next
+		reverseHead.next = cur
+		cur = next
+	}
+	head.next = reverseHead.next
 }
 
 //创建链表结构体
