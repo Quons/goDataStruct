@@ -8,42 +8,48 @@ import (
 func main() {
 	var heroList HeroNodeList
 	h1 := HeroNode{1, "林冲", "豹子头", nil}
-	h2 := HeroNode{2, "鲁智深", "花和尚", nil}
 	h3 := HeroNode{3, "张璐", "玉麒麟", nil}
-	h4 := HeroNode{4, "武松", "老虎克星", nil}
-
 	h5 := HeroNode{5, "武松", "老虎克星", nil}
-	h6 := HeroNode{6, "武松2", "老虎克星", nil}
 	if err := heroList.Add(h1); err != nil {
-		fmt.Print(err)
-	}
-	if err := heroList.Add(h2); err != nil {
 		fmt.Print(err)
 	}
 	if err := heroList.Add(h3); err != nil {
 		fmt.Print(err)
 	}
-	if err := heroList.Add(h4); err != nil {
+	if err := heroList.Add(h5); err != nil {
 		fmt.Print(err)
 	}
-	if err := heroList.AddByOrder(h6); err != nil {
+
+	var heroListNew HeroNodeList
+	h2 := HeroNode{2, "鲁智深", "花和尚", nil}
+	h4 := HeroNode{4, "武松", "老虎克星", nil}
+	h6 := HeroNode{6, "武松2", "老虎克星", nil}
+
+	if err := heroListNew.Add(h2); err != nil {
 		fmt.Print(err)
 	}
-	if err := heroList.AddByOrder(h5); err != nil {
+	if err := heroListNew.AddByOrder(h4); err != nil {
 		fmt.Print(err)
 	}
-	h6.Name = "刘恒越"
-	heroList.Update(h6)
-	heroList.List()
-	fmt.Println(GetLength(*heroList.Head))
-	node, err := GetLastIndexNode(*heroList.Head, 6)
-	if err != nil {
-		fmt.Println(err)
-		return
+	if err := heroListNew.AddByOrder(h6); err != nil {
+		fmt.Print(err)
 	}
-	fmt.Printf("%v\n", node.String())
-	ReverseLinkedList(heroList.Head)
-	heroList.List()
+	//h6.Name = "刘恒越"
+	//heroList.Update(h6)
+	//heroList.List()
+	//fmt.Println(GetLength(*heroList.Head))
+	//node, err := GetLastIndexNode(*heroList.Head, 6)
+	//if err != nil {
+	//	fmt.Println(err)
+	//	return
+	//}
+	//fmt.Printf("%v\n", node.String())
+	//ReverseLinkedList(heroList.Head)
+	//heroList.List()
+	//fmt.Println("反转打印。。")
+	//ReversePrint(heroList.Head)
+	resultList := CombineList(*heroList.Head, *heroListNew.Head)
+	resultList.List()
 }
 
 //获取链表的有效长度，带头结点的链表不包含头结点
@@ -103,6 +109,55 @@ func ReverseLinkedList(head *HeroNode) {
 		cur = next
 	}
 	head.next = reverseHead.next
+}
+
+//反转打印
+func ReversePrint(head *HeroNode) {
+	//判断是否为空
+	if head.next == nil {
+		return
+	}
+	//先声明一个slice
+	stack := make([]*HeroNode, 0, 100)
+	cur := head.next
+	for cur != nil {
+		stack = append(stack, cur)
+		cur = cur.next
+	}
+	for i := len(stack) - 1; i >= 0; i-- {
+		fmt.Println(stack[i])
+	}
+}
+
+//将两个有序链表合并，最后返回新的有序的链表
+func CombineList(first, second HeroNode) (resultList HeroNodeList) {
+	//创建head
+	resultList.Head = &HeroNode{0, "", "", nil}
+	resultCur := resultList.Head
+	firstCur := first.next
+	secondCur := second.next
+	var tmpNode *HeroNode
+	for {
+		if firstCur == nil {
+			resultCur.next = secondCur
+			break
+		}
+		if secondCur == nil {
+			resultCur.next = firstCur
+			break
+		}
+		//判断哪个大
+		if firstCur.No > secondCur.No {
+			tmpNode = secondCur
+			secondCur = secondCur.next
+		} else {
+			tmpNode = firstCur
+			firstCur = firstCur.next
+		}
+		resultCur.next = tmpNode
+		resultCur = tmpNode
+	}
+	return
 }
 
 //创建链表结构体
