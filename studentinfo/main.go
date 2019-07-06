@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"strconv"
-	"strings"
 )
 
 type Student struct {
@@ -37,7 +35,7 @@ type StudentMobile struct {
 }
 
 func main() {
-	csvFile, err := os.Open("/Users/quon/go/src/goDataStruct/studentinfo/student-info-0702.csv")
+	csvFile, err := os.Open("/Users/quon/go/src/goDataStruct/studentinfo/collage.csv")
 	if err != nil {
 		panic(err)
 	}
@@ -48,27 +46,21 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	mobileInfo := make(map[int64]string, 100)
-	tmpLen := 0
+	count := 0
 	for _, row := range rows {
-		var r Respon
+		var r StudentMobile
 		err = json.Unmarshal([]byte(row[1]), &r)
 		if err != nil {
 			fmt.Println(err)
 			continue
 		}
-		if r.Data.Mobile == "" {
+		if r.Mobile == "" {
 			continue
 		}
-		mobileInfo[r.Data.StudentId] = r.Data.Mobile
-		curLen := len(mobileInfo)
-		if tmpLen != curLen {
-			if strings.Contains(studentIdList, strconv.FormatInt(r.Data.StudentId, 10)) {
-				fmt.Printf("update cb_student set linkMobile=%s where linkMobile='' and studentId=%v;\n", r.Data.Mobile, r.Data.StudentId)
-			}
-			tmpLen = curLen
-		}
+		count++
+		fmt.Printf("update cb_student set linkMobile='%s' where linkMobile='' and userId=%v;\n", r.Mobile, row[0])
 	}
+	fmt.Println(count)
 }
 
 var studentIdList = `48016298,
