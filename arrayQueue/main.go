@@ -141,7 +141,7 @@ func (a *ArrayQueue) size() int {
 	return (a.Rear + a.MaxSize - a.Front) % a.MaxSize
 }
 func Test() {
-var a =23
-fmt.Println(a)
+	var a = 23
+	fmt.Println(a)
 
 }

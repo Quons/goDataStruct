@@ -3,10 +3,11 @@ package main
 import (
 	"errors"
 	"fmt"
+	"strconv"
 )
 
 func main() {
-	expression := "7+2*6-3"
+	expression := "70+2*6-3"
 	//创建两个堆栈
 	numStack := CreateStack(10)
 	operStack := CreateStack(10)
@@ -15,11 +16,12 @@ func main() {
 	num2 := 0
 	res := 0
 	oper := 0
+	keepNum := ""
+	index := 0
 	var err error
-	//读取字符s
-	runes := []rune(expression)
-	for _, value := range runes {
-		ch := int(value)
+	for {
+		//获取到index所在的字符
+		ch := int(expression[index])
 		//判断当前是数字还是运算符
 		if IsOper(ch) {
 			//运算符
@@ -54,8 +56,30 @@ func main() {
 				}
 			}
 		} else {
-			//数字，直接入栈（用不用-48)
-			numStack.Push(ch - 48)
+			keepNum += string(ch)
+			//判断是不是最后一个字符
+			if index == len(expression)-1 {
+				n, err := strconv.ParseInt(keepNum, 10, 64)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				numStack.Push(int(n))
+			} else {
+				if IsOper(int(expression[index+1])) {
+					n, err := strconv.ParseInt(keepNum, 10, 64)
+					if err != nil {
+						fmt.Println(err)
+						return
+					}
+					numStack.Push(int(n))
+					keepNum = ""
+				}
+			}
+		}
+		index++
+		if index >= len(expression) {
+			break
 		}
 	}
 	//将最后栈中的元素进行计算
